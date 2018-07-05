@@ -5,7 +5,7 @@
                 <div class="col-sm-8 offset-sm-2 p-2 mt-5">
                     <div class="card">
                         <article class="card-body">
-                            <router-link class="float-right btn btn-outline-info" to="/register">Sign up</router-link>
+                            <router-link class="float-right btn btn-outline-warning" to="/register">Sign up</router-link>
                             <h4 class="card-title mb-4 mt-1">Sign in</h4>
                             <hr>
                             <form>
@@ -22,7 +22,7 @@
                                     <p v-if="!$v.password.required && $v.password.$dirty" class="error">Field is required</p>
                                 </div> <!-- form-group// -->                                      
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-info btn-block" @click.prevent="login"> Login  </button>
+                                    <button type="submit" class="btn btn-warning btn-block" @click.prevent="login"> Login  </button>
                                 </div> <!-- form-group// --> 
                                 <div class="alert alert-danger" v-if="submitStatus === 'ERROR'">
                                     {{messages}}
@@ -42,7 +42,7 @@
     </div>
 </template>
 <script>
-import { required, username } from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 import axios from "axios";
 import { eventBus } from "../main";
 
@@ -74,10 +74,9 @@ export default {
         let loginData = {
           username: this.username,
           password: this.password,
-          fbId: this.fbId
         };
         axios
-          .post(`/login`, loginData)
+          .post(`/api/login`, loginData)
           .then(result => {
             console.log(result);
             this.token = result.data.token;
@@ -91,9 +90,8 @@ export default {
           })
           .catch(err => {
             //   console.log(err.response.data);
-            let error = err.response.data.error.message;
             this.submitStatus = "ERROR";
-            this.messages = `${error}`;
+            this.messages = `${err}`;
           });
         this.submitStatus = "PENDING";
         this.messages = "Sending...";

@@ -6,7 +6,7 @@ const SALT_WORK_FACTOR = 10;
 
 
 const userSchema = Schema({
-    username: { type: String, required: true },
+    username: { type: String, required: true, unique: true },
     password: { type: String, required: true, minlength : [6, 'Password minimun 6 character'], match: [/(?=.*?[0-9])/,'The Password must contain at least 1 numeric character'], select: false },
 },
     {

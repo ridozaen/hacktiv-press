@@ -8,11 +8,11 @@
                         <router-link to="/login" class="float-right btn btn-outline-warning">Sign in</router-link>
                         <h4 class="card-title mb-4 mt-1">Sign up</h4>
                         <form>
-                            <div class="form-group" :class="{invalid: !$v.name.required && $v.name.$dirty}">
-                                <input type="text" name="name" class="form-control" placeholder="name"
-                                @blur="$v.name.$touch()"
-                                v-model="name">
-                                <p v-if="!$v.name.required && $v.name.$dirty" class="error">Field is required</p>
+                            <div class="form-group" :class="{invalid: !$v.username.required && $v.username.$dirty}">
+                                <input type="text" name="username" class="form-control" placeholder="username"
+                                @blur="$v.username.$touch()"
+                                v-model="username">
+                                <p v-if="!$v.username.required && $v.username.$dirty" class="error">Field is required</p>
                             </div> <!-- form-group// -->
                             <div class="form-group" :class="{invalid: $v.password.$error}">
                                 <input name="password" class="form-control" placeholder="password" type="password"
@@ -20,13 +20,7 @@
                                 <p v-if="!$v.password.required && $v.password.$dirty" class="error">Field is required</p>
                                 <p v-else-if="!$v.password.minLength" class="error">Password minimun 6 character</p>
                                 <p v-else-if="!$v.password.alphaNum && $v.password.$dirty" class="error">The Password must contain at least 1 numeric character</p>
-                            </div> <!-- form-group// --> 
-                            <div class="form-group" :class="{invalid: $v.email.$error}">
-                                <input name="email" class="form-control" placeholder="email"
-                                @blur="$v.email.$touch()" v-model="email">
-                                <p v-if="!$v.email.email" class="error">Invalid email address</p>
-                                <p v-if="!$v.email.required  && $v.email.$dirty" class="error">Field is required</p>
-                            </div> <!-- form-group// -->                                     
+                            </div>                                   
                             <div class="form-group">
                                 <button type="submit" class="btn btn-warning btn-block" @click.prevent="register"> Register  </button>
                             </div> <!-- form-group// -->
@@ -50,7 +44,7 @@
 </template>
  
 <script>
-import { required, email, minLength } from "vuelidate/lib/validators";
+import { required, minLength } from "vuelidate/lib/validators";
 import axios from "axios";
 
 const alphaNum = value => {
@@ -59,20 +53,15 @@ const alphaNum = value => {
 export default {
   data() {
     return {
-      name: "",
-      email: "",
+      username: "",
       password: "",
       submitStatus: null,
       messages: null
     };
   },
   validations: {
-    name: {
+    username: {
       required
-    },
-    email: {
-      required,
-      email
     },
     password: {
       required,
@@ -87,11 +76,10 @@ export default {
         this.messages = "Please fill the form correctly";
       } else {
         let regData = {
-            name: this.name,
+            username: this.username,
             password: this.password,
-            email: this.email
         }
-        axios.post(`/register`,regData)
+        axios.post(`/api/register`,regData)
         .then(result=>{
             console.log(result)
             // let name = result.data.user.name
@@ -100,10 +88,9 @@ export default {
             this.$router.push({ name: 'login' })
         })
         .catch((e)=>{
-            console.log('error:',e.response.data.error.message);
-            let error = e.response.data.error.message.split(':').splice(1).join(':').split(',');
+            console.log('error:',e);
             this.submitStatus = "ERROR";
-            this.messages = `${error[0]},  ${error[1]}`;
+            this.messages = e;
         })
         this.submitStatus = "PENDING";
         this.messages = "Sending...";
